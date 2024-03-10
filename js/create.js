@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('diretor').value = urlParams.get('diretor');
       document.getElementById('descricao').value = urlParams.get('descricao');
       document.getElementById('lancamento').value = urlParams.get('lancamento');
+      update = true;
   }
 });
 

@@ -6,7 +6,8 @@ async function login(username, password) {
     .from('admins')
     .select()
     .eq('username', username)
-    .eq('password', password);
+    .eq('password', password)
+    .eq('active', true);
 
     if (error) {
       throw error;
