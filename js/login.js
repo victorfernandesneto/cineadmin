@@ -1,40 +1,50 @@
 import supabase from '../client.js';
 
-async function login(username, password) {
+async function login(email, password) {
   try {
-    const { data, error } = await supabase
-    .from('admins')
-    .select()
-    .eq('username', username)
-    .eq('password', password)
-    .eq('active', true);
+    const { user, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    const { data } = await supabase.auth.getSession();
 
     if (error) {
-      throw error;
-    }
-
-    if (data && data.length > 0) {
-        const user = data[0];
-        if (user.password == password) {
-          console.log('Login bem-sucedido!');
-          window.location.href = 'http://127.0.0.1:8080/filmes.html'
-        } else {
-          console.log('Senha incorreta.');
-          window.location.href = 'http://127.0.0.1:8080/index.html?error=credenciais_invalidas'
-        }
-      } else {
-        console.log('Usuário não encontrado ou usuário inativo.');
-        window.location.href = 'http://127.0.0.1:8080/index.html?error=credenciais_invalidas'
-      }
-    } catch (error) {
       console.error('Erro ao realizar o login:', error.message);
+      window.location.href = 'http://127.0.0.1:8080/index.html?error=credenciais_invalidas';
     }
+
+    if (data) {
+      console.log('Login bem-sucedido!', user);
+
+      const token = data.access_token;
+
+      localStorage.setItem('supabaseToken', token);
+
+      window.location.href = 'http://127.0.0.1:8080/filmes.html';
+    } else {
+      console.log('Usuário não autenticado.');
+    }
+  } catch (error) {
+    console.error('Erro ao realizar o login:', error.message);
   }
+}
 
-loginForm.addEventListener("submit", async(e) => {
-    e.preventDefault();
-    const username = loginForm.username.value;
-    const password = loginForm.password.value;
+window.addEventListener('load', async () => {
+  const storedToken = localStorage.getItem('supabaseToken');
 
-    login(username, password);
+  if (storedToken) {
+
+    window.location.href = 'http://127.0.0.1:8080/filmes.html';
+  }
+});
+
+const loginForm = document.getElementById('loginForm');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = loginForm.email.value;
+  const password = loginForm.password.value;
+
+  login(email, password);
 });

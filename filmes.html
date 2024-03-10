@@ -19,6 +19,17 @@
                 window.location.reload();
             }
         };
+
+        window.logout = async function() {
+            // Remova o token do localStorage
+            localStorage.removeItem('supabaseToken');
+
+            // Deslogue o usuário do Supabase
+            await supabase.auth.signOut();
+
+            // Redirecione para a página de login ou qualquer outra página desejada
+            window.location.href = 'http://127.0.0.1:8080/index.html';
+        };
     </script>
 </head>
 
@@ -27,7 +38,10 @@
         <nav class="navbar navbar-light bg-light">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">CineAdmin</span>
-                <a class="btn btn-outline-warning" href="./cadastro.html" role="button">Cadastro</a>
+                <div class="ms-auto">
+                    <a class="btn btn-warning" href="./cadastro.html" role="button">Cadastro</a>
+                    <button class="btn btn-danger" onclick="logout()">Logout</button>
+                </div>
             </div>
         </nav>
     </div>
